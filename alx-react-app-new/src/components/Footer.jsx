@@ -1,17 +1,15 @@
-import React from "react";
-
 function Footer() {
   return (
     <footer
       style={{
-        backgroundColor: "#222",
+        backgroundColor: "#333",
         color: "#fff",
         textAlign: "center",
         padding: "1rem",
-        marginTop: "20px",
+        marginTop: "2rem",
       }}
     >
-      <p>&copy; 2025 My Favorite Cities</p>
+      <p>&copy; 2025 My Favorite Cities. All rights reserved.</p>
     </footer>
   );
 }

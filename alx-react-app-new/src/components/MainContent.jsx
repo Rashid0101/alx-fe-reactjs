@@ -1,19 +1,15 @@
-import React from "react";
-import UserProfile from "./UserProfile";
-
 function MainContent() {
   return (
-    <main style={{ padding: "20px", backgroundColor: "#e6f2ff" }}>
-      <UserProfile
-        name="Alice"
-        age={28}
-        bio="Loves traveling and photography."
-      />
-      <UserProfile
-        name="Bob"
-        age={34}
-        bio="Avid reader and coffee enthusiast."
-      />
+    <main
+      style={{
+        padding: "2rem",
+        backgroundColor: "#f0f8ff",
+        minHeight: "60vh",
+      }}
+    >
+      <p style={{ fontSize: "1.1rem" }}>
+        I love to visit New York, Paris, and Tokyo.
+      </p>
     </main>
   );
 }
