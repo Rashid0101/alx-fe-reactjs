@@ -1,55 +1,71 @@
-import { useState } from "react";
-import { fetchUserData } from "../services/githubService";
+import React, { useState } from 'react';
+import { fetchAdvancedUserSearch } from '../services/githubService';
 
-function Search() {
-  const [username, setUsername] = useState("");
-  const [userData, setUserData] = useState(null);
+const Search = () => {
+  const [form, setForm] = useState({
+    username: '',
+    location: '',
+    minRepos: ''
+  });
+  const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(false);
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
-    setUserData(null);
-
+    setError(false);
     try {
-      const data = await fetchUserData(username);
-      setUserData(data);
+      const data = await fetchAdvancedUserSearch(form);
+      setResults(data.items);
     } catch (err) {
-      setError("Looks like we cant find the user");
-    } finally {
-      setLoading(false);
+      console.error(err);
+      setError(true);
     }
+    setLoading(false);
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
+    <div className="max-w-xl mx-auto p-4">
+      <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          placeholder="Enter GitHub username"
+          name="username"
+          placeholder="Username"
+          value={form.username}
+          onChange={handleChange}
+          className="w-full p-2 border rounded"
         />
-        <button type="submit">Search</button>
+        <input
+          type="text"
+          name="location"
+          placeholder="Location"
+          value={form.location}
+          onChange={handleChange}
+          className="w-full p-2 border rounded"
+        />
+        <input
+          type="number"
+          name="minRepos"
+          placeholder="Minimum Repositories"
+          value={form.minRepos}
+          onChange={handleChange}
+          className="w-full p-2 border rounded"
+        />
+        <button
+          type="submit"
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        >
+          Search
+        </button>
       </form>
 
-      {loading && <p>Loading...</p>}
+      {loading && <p className="mt-4 text-center">Loading...</p>}
+      {error && <p className="mt-4 text-red-600 text-center">Looks like we can’t find the user.</p>}
 
-      {error && <p>{error}</p>}
-
-      {userData && (
-        <div>
-          <img src={userData.avatar_url} alt={userData.login} width={100} />
-          <h3>{userData.name || userData.login}</h3>
-          <a href={userData.html_url} target="_blank" rel="noreferrer">
-            Visit GitHub Profile
-          </a>
-        </div>
-      )}
-    </div>
-  );
-}
-
-export default Search;
+      <div className="mt-6 space-y-4">
+        {r
