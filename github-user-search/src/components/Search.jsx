@@ -8,6 +8,7 @@ const Search = () => {
   const handleSearch = async (e) => {
     e.preventDefault();
     setError("");
+    setUsers([]);
 
     if (!query.trim()) {
       setError("Please enter a search term.");
@@ -18,13 +19,21 @@ const Search = () => {
       const res = await fetch(`https://api.github.com/search/users?q=${query}`);
       const data = await res.json();
 
-      if (data.items && data.items.length > 0) {
-        setUsers(data.items);
+      if (data.items?.length) {
+        // Fetch detailed user data (to get location)
+        const detailedUsers = await Promise.all(
+          data.items.map(async (user) => {
+            const profileRes = await fetch(user.url); // `url` = https://api.github.com/users/username
+            const profileData = await profileRes.json();
+            return profileData;
+          })
+        );
+        setUsers(detailedUsers);
       } else {
-        setUsers([]);
         setError("Looks like we can't find the user.");
       }
     } catch (err) {
+      console.error(err);
       setError("Something went wrong. Try again later.");
     }
   };
@@ -34,9 +43,9 @@ const Search = () => {
       <form onSubmit={handleSearch}>
         <input
           type="text"
-          placeholder="Search GitHub users"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search GitHub users"
           className="border p-2 rounded"
         />
         <button
@@ -49,16 +58,27 @@ const Search = () => {
 
       {error && <p className="text-red-500 mt-2">{error}</p>}
 
-      <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {users.length > 0 &&
           users.map((user) => (
-            <div key={user.id} className="border p-4 rounded">
+            <div key={user.id} className="border p-4 rounded shadow">
               <img
                 src={user.avatar_url}
                 alt={user.login}
                 className="w-16 h-16 rounded-full mx-auto"
               />
-              <p className="text-center mt-2">{user.login}</p>
+              <h2 className="text-center font-bold mt-2">{user.login}</h2>
+              <p className="text-center text-sm text-gray-600">
+                {user.location ? user.location : "Location not available"}
+              </p>
+              <a
+                href={user.html_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-center text-blue-600 mt-2 underline"
+              >
+                View Profile
+              </a>
             </div>
           ))}
       </div>
