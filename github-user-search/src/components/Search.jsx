@@ -1,61 +1,55 @@
 import { useState } from "react";
 import { fetchUserData } from "../services/githubService";
 
-const Search = () => {
+function Search() {
   const [username, setUsername] = useState("");
-  const [user, setUser] = useState(null);
+  const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError(false);
-    setUser(null);
+    setError("");
+    setUserData(null);
 
     try {
       const data = await fetchUserData(username);
-      setUser(data);
+      setUserData(data);
     } catch (err) {
-      setError(true);
+      setError("Looks like we cant find the user");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ padding: "2rem", textAlign: "center" }}>
+    <div>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
-          placeholder="Search GitHub username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          style={{ padding: "0.5rem", width: "250px" }}
+          placeholder="Enter GitHub username"
         />
-        <button type="submit" style={{ marginLeft: "1rem", padding: "0.5rem" }}>
-          Search
-        </button>
+        <button type="submit">Search</button>
       </form>
 
       {loading && <p>Loading...</p>}
-      {error && <p>Looks like we can't find the user</p>}
-      {user && (
-        <div style={{ marginTop: "2rem" }}>
-          <img
-            src={user.avatar_url}
-            alt={user.login}
-            width={100}
-            style={{ borderRadius: "50%" }}
-          />
-          <h2>{user.name || user.login}</h2>
-          <a href={user.html_url} target="_blank" rel="noopener noreferrer">
-            View Profile
+
+      {error && <p>{error}</p>}
+
+      {userData && (
+        <div>
+          <img src={userData.avatar_url} alt={userData.login} width={100} />
+          <h3>{userData.name || userData.login}</h3>
+          <a href={userData.html_url} target="_blank" rel="noreferrer">
+            Visit GitHub Profile
           </a>
         </div>
       )}
     </div>
   );
-};
+}
 
 export default Search;
