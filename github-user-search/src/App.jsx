@@ -1,14 +1,14 @@
 import "./App.css";
-// src/App.jsx
-import SearchBar from "./components/SearchBar";
 
-function App() {
+import Search from "./components/Search";
+
+const App = () => {
   return (
-    <div style={{ padding: "2rem" }}>
-      <h1>GitHub User Search</h1>
-      <SearchBar />
+    <div>
+      <h1 style={{ textAlign: "center" }}>GitHub User Search</h1>
+      <Search />
     </div>
   );
-}
+};
 
 export default App;
